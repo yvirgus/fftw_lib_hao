@@ -77,9 +77,9 @@ void four_1D_test()
     for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     //cout << "flag forward: " << flag << endl;
 
-    //b=fft.fourier_back(a);
+    b=fft.fourier_back(a);
     //for(int i=0; i<3; i++) {cout << "b backward: " << b[i] << endl;}
-    //for(int i=0; i<3; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
+    for(int i=0; i<3; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
     //cout << "flag backward: " << flag << endl;
 
     if(flag==0) cout<<"FFTServer_cu passed the 1D fourier test!\n";
@@ -117,10 +117,10 @@ void four_2D_test()
 
 void fftw_cuda_test()
 {
-    //FFTServer_cu_void_construction_test();
-    //FFTServer_cu_param_construction_test();
-    //FFTServer_cu_equal_construction_test(); 
-    //FFTServer_cu_equal_test();
+    FFTServer_cu_void_construction_test();
+    FFTServer_cu_param_construction_test();
+    FFTServer_cu_equal_construction_test(); 
+    FFTServer_cu_equal_test();
     four_1D_test();
-    //four_2D_test();
+    four_2D_test();
 }
