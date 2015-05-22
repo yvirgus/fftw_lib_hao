@@ -29,11 +29,16 @@ FFTServer_cu::FFTServer_cu()
     dimen=1;
     n=new int[1]; n[0]=1;
     L=1;
+
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
+
     if (stat != CUFFT_SUCCESS){
         fprintf(stderr, "CUFFT Error: Plan creation failed\n");
     }
 
+    if (cudaDeviceSynchronize() != cudaSuccess){
+        fprintf(stderr, "Cuda error: Failed to synchronize\n");
+    }
 }
 
 FFTServer_cu::FFTServer_cu(int Dc, const int* Nc, char format)
@@ -52,8 +57,10 @@ FFTServer_cu::FFTServer_cu(int Dc, const int* Nc, char format)
     if (stat != CUFFT_SUCCESS){
         fprintf(stderr, "CUFFT Error: Plan creation failed\n");
     }
+    if (cudaDeviceSynchronize() != cudaSuccess){
+        fprintf(stderr, "Cuda error: Failed to synchronize\n");
+    }
 }
-
 
 FFTServer_cu::FFTServer_cu(const FFTServer_cu& x) 
 {
@@ -67,16 +74,24 @@ FFTServer_cu::FFTServer_cu(const FFTServer_cu& x)
     if (stat != CUFFT_SUCCESS){
         fprintf(stderr, "CUFFT Error: Plan creation failed\n");
     }
-
+    if (cudaDeviceSynchronize() != cudaSuccess){
+        fprintf(stderr, "Cuda error: Failed to synchronize\n");
+    }
 }
-
 
 FFTServer_cu::~FFTServer_cu()
 {
+    cout << "Destructor" << endl;
+    
     if(n)       delete[] n;
+    if(inforw) { cout << "inforw detected " << endl; cudaFree(inforw); } 
+    if(outforw) { cout << "outforw detected " << endl; cudaFree(outforw); } 
+    if(outforw_host) { cout << "outforw_host detected " << endl; delete[] outforw_host; } 
+    if(inback) { cout << "inback detected " << endl; cudaFree(inback); } 
+    if(outback) { cout << "outback detected " << endl; cudaFree(outback); } 
+    if(outback_host) { cout << "outback_host detected " << endl; delete[] outback_host; } 
     cufftDestroy(plan);
 }
-
 
 FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
 {
@@ -95,11 +110,9 @@ FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
     return *this;
 }
 
-
 complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
 {
     cufftResult stat;
-
 
     cudaMalloc((void**)&inforw, sizeof(cufftDoubleComplex)*L);
     cudaMalloc((void**)&outforw, sizeof(cufftDoubleComplex)*L);
@@ -114,13 +127,14 @@ complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
     
     outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
 
-    //cudaMallocHost((void**)&outforw_host, sizeof(cufftDoubleComplex)*L);
     cudaMemcpy(outforw_host, outforw, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
 
-    cudaFree(inforw);
-    cudaFree(outforw);
-    //cudaFreeHost(outforw_host);
-    delete[] outforw_host;
+    //for(int i=0; i<L; i++) {cout << "b forward: " << outforw_host[i] << endl;}
+
+    if (cudaDeviceSynchronize() != cudaSuccess){
+        fprintf(stderr, "Cuda error: Failed to synchronize\n");
+    }
+
     return outforw_host;
 }
 
@@ -141,14 +155,12 @@ complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray)
     
     outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
 
-    //cudaMallocHost((void**)&outback_host, sizeof(cufftDoubleComplex)*L);
     cudaMemcpy(outback_host, outback, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
 
-    cudaFree(inback);
-    cudaFree(outback);
-    //cudaFreeHost(outback_host);
-    delete[] outback_host;
-    return outback_host;
+    if (cudaDeviceSynchronize() != cudaSuccess){
+        fprintf(stderr, "Cuda error: Failed to synchronize\n");
+    }
 
+    return outback_host;
 }
 
