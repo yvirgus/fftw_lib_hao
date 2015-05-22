@@ -13,7 +13,9 @@ FFTServer_cu::FFTServer_cu()
     dimen=1;
     n=new int[1]; n[0]=1;
     L=1;
+
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
+
     if (stat != CUFFT_SUCCESS){
         fprintf(stderr, "CUFFT Error: Plan creation failed\n");
     }
