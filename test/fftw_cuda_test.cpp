@@ -75,7 +75,17 @@ void four_1D_test()
     b=fft.fourier_forw(a);
     for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     b=fft.fourier_back(a);
+
+    //for(int i=0; i<3; i++) {cout << "b forward: " << b[i] << endl;}
+    for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
+    //cout << "flag forward: " << flag << endl;
+
+    b=fft.fourier_back(a);
+    //for(int i=0; i<3; i++) {cout << "b backward: " << b[i] << endl;}
+
     for(int i=0; i<3; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
+    //cout << "flag backward: " << flag << endl;
+
     if(flag==0) cout<<"FFTServer_cu passed the 1D fourier test!\n";
     else cout<<"Warning!!!! FFTServer_cu failed the 1D fourier test!\n";
 }
@@ -97,7 +107,15 @@ void four_2D_test()
     for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     b=fft.fourier_back(a);
 
+    //for(int i=0; i<6; i++) {cout << "b forward: " << b[i] << endl;}
+    for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
+    //cout << "flag forward: " << flag << endl;
+
+    b=fft.fourier_back(a);
+    //for(int i=0; i<6; i++) {cout << "b backward: " << b[i] << endl;}
     for(int i=0; i<6; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
+    //cout << "flag backward: " << flag << endl;
+
     if(flag==0) cout<<"FFTServer_cu passed the 2D fourier test!\n";
     else cout<<"Warning!!!! FFTServer_cu failed the 2D fourier test!\n";
     //cout<<flag<<endl;

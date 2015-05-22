@@ -9,12 +9,11 @@ class FFTServer_cu
     int* n;
     int  L;
     cufftHandle plan;
-    cufftDoubleComplex *inforw;
-    cufftDoubleComplex *outforw;
-    std::complex<double> *outforw_host;
-    cufftDoubleComplex *inback;
-    cufftDoubleComplex *outback;
-    std::complex<double> *outback_host;
+    cufftDoubleComplex *dataforw = nullptr;
+    cufftDoubleComplex *databack = nullptr;
+    std::complex<double> *outforw_host = nullptr;
+    std::complex<double> *outback_host = nullptr;
+
  public:
     FFTServer_cu();
     FFTServer_cu(int Dc, const int* Nc, char format); //'C' Column-major: fortran style; 'R' Row-major: c style;
