@@ -11,8 +11,18 @@ add_definitions(${COMPILER_EXTRA_DEF})
 #For c++ flag
 set(CMAKE_CXX_FLAGS "${COMPILER_EXTRA_FLAG}" ${CMAKE_CXX_FLAGS})
 
-find_package(fftw REQUIRED)
-include_directories(${fftw_include_dirs})
+if(USE_CUDA)
+  find_package(CUDA)
+  include_directories(${CUDA_INCLUDE_DIRS})
+  message("CUDA DIRS: ${CUDA_INCLUDE_DIRS}")
+  #set(all_lib "${CUDA_LIBRARIES}" "${CUDA_CUFFT_LIBRARIES}")
+  set(all_lib -L/usr/local/cuda-5.5/lib64 -lcudart "${CUDA_CUFFT_LIBRARIES}")      
+  message("all libs: ${CUDA_LIBRARIES} ${CUDA_CUFFT_LIBRARIES}")
+else()
+  find_package(fftw REQUIRED)
+  include_directories(${fftw_include_dirs})
+  set(all_lib "${fftw_libraries}")
+endif()
 
 include_directories(inc)
 

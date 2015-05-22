@@ -3,11 +3,14 @@
 #include <mpi.h>
 #endif
 
-#include "fftw_hao.h"
+//#include "fftw_hao.h"
+#include "fftw_cuda.h"
 
 using namespace std;
 
-void fftw_hao_test();
+//void fftw_hao_test();
+void fftw_cuda_test();
+
 int main(int argc, char** argv)
 {
     int rank=0;
@@ -20,7 +23,8 @@ int main(int argc, char** argv)
     if(rank==0)
     {   
         cout<<"\n\n\n=======Testing======="<<endl;
-        fftw_hao_test();
+        //fftw_hao_test();
+        fftw_cuda_test();
     }
 
 
