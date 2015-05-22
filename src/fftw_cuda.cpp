@@ -96,7 +96,7 @@ FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
 }
 
 
-complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray, int *n)
+complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
 {
     cufftResult stat;
 
@@ -124,7 +124,7 @@ complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray, int 
     return outforw_host;
 }
 
-complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray, int *n)
+complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray)
 {
     cufftResult stat;
 

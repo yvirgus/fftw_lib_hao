@@ -23,8 +23,8 @@ class FFTServer_cu
    
     FFTServer_cu& operator  = (const FFTServer_cu& x);
    
-    std::complex<double>* fourier_forw(const std::complex<double>* inarray, int *n);
-    std::complex<double>* fourier_back(const std::complex<double>* inarray, int *n);
+    std::complex<double>* fourier_forw(const std::complex<double>* inarray);
+    std::complex<double>* fourier_back(const std::complex<double>* inarray);
    
     friend void FFTServer_cu_void_construction_test();
     friend void FFTServer_cu_param_construction_test();
