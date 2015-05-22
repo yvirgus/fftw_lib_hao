@@ -73,16 +73,12 @@ void four_1D_test()
     size_t flag=0;
    
     b=fft.fourier_forw(a);
-    for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
-    b=fft.fourier_back(a);
-
     //for(int i=0; i<3; i++) {cout << "b forward: " << b[i] << endl;}
     for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     //cout << "flag forward: " << flag << endl;
 
     b=fft.fourier_back(a);
     //for(int i=0; i<3; i++) {cout << "b backward: " << b[i] << endl;}
-
     for(int i=0; i<3; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
     //cout << "flag backward: " << flag << endl;
 
@@ -104,9 +100,6 @@ void four_2D_test()
     size_t flag=0;
    
     b=fft.fourier_forw(a);
-    for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
-    b=fft.fourier_back(a);
-
     //for(int i=0; i<6; i++) {cout << "b forward: " << b[i] << endl;}
     for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     //cout << "flag forward: " << flag << endl;
