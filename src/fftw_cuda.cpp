@@ -7,28 +7,17 @@ using std::cout;
 using std::endl;
 using std::complex;
 
-/*
-typedef cufftDoubleComplex zcomplex_t;
-
-typedef zcomplex_t *zcomplex_ptr_t;
-typedef const zcomplex_t *const_zcomplex_ptr_t;
-
-static zcomplex_ptr_t _cast_Zptr(std::complex<double> *A)
-{   
-    return reinterpret_cast<zcomplex_ptr_t>(A);
-}
-static const_zcomplex_ptr_t _cast_Zptr(const std::complex<double> *A)
-{
-    return reinterpret_cast<const_zcomplex_ptr_t>(A);
-}
-*/
-
 FFTServer_cu::FFTServer_cu()
 {
     cufftResult stat;
     dimen=1;
     n=new int[1]; n[0]=1;
     L=1;
+
+    cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
+    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
+    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
 
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
@@ -52,6 +41,11 @@ FFTServer_cu::FFTServer_cu(int Dc, const int* Nc, char format)
 
     L=1; for(int i=0; i<dimen; i++) L*=n[i];
 
+    cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
+    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
+    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
     if (stat != CUFFT_SUCCESS){
@@ -69,6 +63,11 @@ FFTServer_cu::FFTServer_cu(const FFTServer_cu& x)
     n=new int[dimen]; std::copy(x.n,x.n+dimen,n);
     L=x.L;
 
+    cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
+    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
+    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
     if (stat != CUFFT_SUCCESS){
@@ -84,15 +83,17 @@ FFTServer_cu::~FFTServer_cu()
     cout << "Destructor" << endl;
     
     if(n)       delete[] n;
-    //if(inforw) { cout << "inforw detected " << endl; cudaFree(inforw); } 
-    //if(outforw) { cout << "outforw detected " << endl; cudaFree(outforw); }
     if(dataforw) { cout << "dataforw detected " << endl; cudaFree(dataforw); } 
     if(outforw_host) { cout << "outforw_host detected " << endl; delete[] outforw_host; } 
     if(databack) { cout << "databack detected " << endl; cudaFree(databack); } 
-    //if(inback) { cout << "inback detected " << endl; cudaFree(inback); } 
-    //if(outback) { cout << "outback detected " << endl; cudaFree(outback); } 
     if(outback_host) { cout << "outback_host detected " << endl; delete[] outback_host; } 
     cufftDestroy(plan);
+
+    //if(inforw) { cout << "inforw detected " << endl; cudaFree(inforw); } 
+    //if(outforw) { cout << "outforw detected " << endl; cudaFree(outforw); }
+    //if(inback) { cout << "inback detected " << endl; cudaFree(inback); } 
+    //if(outback) { cout << "outback detected " << endl; cudaFree(outback); } 
+
 }
 
 FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
@@ -101,6 +102,16 @@ FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
     dimen=x.dimen;
     if(n) delete[] n; n=new int[dimen]; std::copy(x.n,x.n+dimen,n);
     L=x.L;
+
+    if(dataforw) { cout << "dataforw detected inside " << endl; cudaFree(dataforw); } 
+    if(outforw_host) { cout << "outforw_host detected inside " << endl; delete[] outforw_host; } 
+    if(databack) { cout << "databack detected inside" << endl; cudaFree(databack); } 
+    if(outback_host) { cout << "outback_host detected inside " << endl; delete[] outback_host; } 
+
+    cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
+    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
+    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
    
     cufftDestroy(plan);
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
@@ -118,7 +129,7 @@ complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
 
     //cudaMalloc((void**)&inforw, sizeof(cufftDoubleComplex)*L);
     //cudaMalloc((void**)&outforw, sizeof(cufftDoubleComplex)*L);
-    cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
+    //cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
 
     //cudaMemcpy(inforw, inarray, sizeof(cufftDoubleComplex)*L, cudaMemcpyHostToDevice);
     cudaMemcpy(dataforw, inarray, sizeof(cufftDoubleComplex)*L, cudaMemcpyHostToDevice);
@@ -130,7 +141,7 @@ complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
         fprintf(stderr, "CUFFT Error: Failed to execute plan\n");
     }
     
-    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
 
     //cudaMemcpy(outforw_host, outforw, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
     cudaMemcpy(outforw_host, dataforw, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
@@ -150,7 +161,7 @@ complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray)
 
     //cudaMalloc((void**)&inback, sizeof(cufftDoubleComplex)*L);
     //cudaMalloc((void**)&outback, sizeof(cufftDoubleComplex)*L);
-    cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
+    //cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
 
     //cudaMemcpy(inback, inarray, sizeof(cufftDoubleComplex)*L, cudaMemcpyHostToDevice);
     cudaMemcpy(databack, inarray, sizeof(cufftDoubleComplex)*L, cudaMemcpyHostToDevice);
@@ -162,7 +173,7 @@ complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray)
         fprintf(stderr, "CUFFT Error: Failed to execute plan\n");
     }
     
-    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
 
     //cudaMemcpy(outback_host, outback, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
     cudaMemcpy(outback_host, databack, sizeof(cufftDoubleComplex)*L, cudaMemcpyDeviceToHost);
