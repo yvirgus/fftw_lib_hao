@@ -14,12 +14,6 @@ class FFTServer_cu
     std::complex<double> *outforw_host = nullptr;
     std::complex<double> *outback_host = nullptr;
 
-    //cufftDoubleComplex *inforw = nullptr;
-    //cufftDoubleComplex *outforw = nullptr;
-
-    //cufftDoubleComplex *inback = nullptr;
-    //cufftDoubleComplex *outback = nullptr;
-
  public:
     FFTServer_cu();
     FFTServer_cu(int Dc, const int* Nc, char format); //'C' Column-major: fortran style; 'R' Row-major: c style;
