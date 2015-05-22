@@ -72,9 +72,9 @@ void four_1D_test()
     complex<double> bback_exact[3]={{6.,9.},{-0.6339745962155603,-2.366025403784437},{-2.366025403784438,-0.6339745962155598}};
     size_t flag=0;
    
-    b=fft.fourier_forw(a, n);
+    b=fft.fourier_forw(a);
     for(int i=0; i<3; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
-    b=fft.fourier_back(a, n);
+    b=fft.fourier_back(a);
     for(int i=0; i<3; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
     if(flag==0) cout<<"FFTServer_cu passed the 1D fourier test!\n";
     else cout<<"Warning!!!! FFTServer_cu failed the 1D fourier test!\n";
@@ -93,9 +93,9 @@ void four_2D_test()
                                     {0., 2. },{0.23205080756887897,-0.1339745962155594},{-3.2320508075688763,-1.8660254037844366}};
     size_t flag=0;
    
-    b=fft.fourier_forw(a, n);
+    b=fft.fourier_forw(a);
     for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
-    b=fft.fourier_back(a, n);
+    b=fft.fourier_back(a);
 
     for(int i=0; i<6; i++) {if(abs(b[i]-bback_exact[i])>1e-12) flag++;}
     if(flag==0) cout<<"FFTServer_cu passed the 2D fourier test!\n";

@@ -7,22 +7,6 @@ using std::cout;
 using std::endl;
 using std::complex;
 
-/*
-typedef cufftDoubleComplex zcomplex_t;
-
-typedef zcomplex_t *zcomplex_ptr_t;
-typedef const zcomplex_t *const_zcomplex_ptr_t;
-
-static zcomplex_ptr_t _cast_Zptr(std::complex<double> *A)
-{   
-    return reinterpret_cast<zcomplex_ptr_t>(A);
-}
-static const_zcomplex_ptr_t _cast_Zptr(const std::complex<double> *A)
-{
-    return reinterpret_cast<const_zcomplex_ptr_t>(A);
-}
-*/
-
 FFTServer_cu::FFTServer_cu()
 {
     cufftResult stat;
@@ -54,7 +38,6 @@ FFTServer_cu::FFTServer_cu(int Dc, const int* Nc, char format)
     }
 }
 
-
 FFTServer_cu::FFTServer_cu(const FFTServer_cu& x) 
 {
     cufftResult stat;
@@ -67,16 +50,13 @@ FFTServer_cu::FFTServer_cu(const FFTServer_cu& x)
     if (stat != CUFFT_SUCCESS){
         fprintf(stderr, "CUFFT Error: Plan creation failed\n");
     }
-
 }
-
 
 FFTServer_cu::~FFTServer_cu()
 {
     if(n)       delete[] n;
     cufftDestroy(plan);
 }
-
 
 FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
 {
@@ -95,8 +75,7 @@ FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
     return *this;
 }
 
-
-complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray, int *n)
+complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray)
 {
     cufftResult stat;
 
@@ -124,7 +103,7 @@ complex<double>* FFTServer_cu::fourier_forw(const complex<double>* inarray, int 
     return outforw_host;
 }
 
-complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray, int *n)
+complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray)
 {
     cufftResult stat;
 
@@ -149,6 +128,5 @@ complex<double>* FFTServer_cu::fourier_back(const complex<double>* inarray, int 
     //cudaFreeHost(outback_host);
     delete[] outback_host;
     return outback_host;
-
 }
 
