@@ -15,9 +15,11 @@ FFTServer_cu::FFTServer_cu()
     L=1;
 
     cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
-    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outforw_host, sizeof(cufftDoubleComplex)*L);
     cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
-    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outback_host, sizeof(cufftDoubleComplex)*L);
 
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
@@ -42,9 +44,11 @@ FFTServer_cu::FFTServer_cu(int Dc, const int* Nc, char format)
     L=1; for(int i=0; i<dimen; i++) L*=n[i];
 
     cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
-    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outforw_host, sizeof(cufftDoubleComplex)*L);
     cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
-    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outback_host, sizeof(cufftDoubleComplex)*L);
 
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
@@ -64,9 +68,11 @@ FFTServer_cu::FFTServer_cu(const FFTServer_cu& x)
     L=x.L;
 
     cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
-    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outforw_host, sizeof(cufftDoubleComplex)*L);
     cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
-    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outback_host, sizeof(cufftDoubleComplex)*L);
 
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
 
@@ -82,9 +88,11 @@ FFTServer_cu::~FFTServer_cu()
 {
     if(n)              delete[] n;
     if(dataforw)       cudaFree(dataforw); 
-    if(outforw_host)   delete[] outforw_host; 
+    //if(outforw_host)   delete[] outforw_host; 
+    if(outforw_host)   cudaFreeHost(outforw_host); 
     if(databack)       cudaFree(databack);  
-    if(outback_host)   delete[] outback_host; 
+    //if(outback_host)   delete[] outback_host; 
+    if(outback_host)    cudaFreeHost(outback_host); 
     cufftDestroy(plan);
 }
 
@@ -96,14 +104,18 @@ FFTServer_cu& FFTServer_cu::operator  = (const FFTServer_cu& x)
     L=x.L;
 
     if(dataforw)       cudaFree(dataforw); 
-    if(outforw_host)   delete[] outforw_host; 
+    //if(outforw_host)   delete[] outforw_host; 
+    if(outforw_host)   cudaFreeHost(outforw_host); 
     if(databack)       cudaFree(databack);  
-    if(outback_host)   delete[] outback_host; 
+    //if(outback_host)   delete[] outback_host; 
+    if(outback_host)   cudaFreeHost(outback_host); 
 
     cudaMalloc((void**)&dataforw, sizeof(cufftDoubleComplex)*L);
-    outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outforw_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outforw_host, sizeof(cufftDoubleComplex)*L);
     cudaMalloc((void**)&databack, sizeof(cufftDoubleComplex)*L);
-    outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    //outback_host = new complex<double>[sizeof(cufftDoubleComplex)*L];
+    cudaMallocHost((void**)&outback_host, sizeof(cufftDoubleComplex)*L);
    
     cufftDestroy(plan);
     stat = cufftPlanMany(&plan, dimen, n, NULL, 1, 0, NULL, 1, 0, CUFFT_Z2Z, 1);
