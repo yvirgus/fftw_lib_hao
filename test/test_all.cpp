@@ -8,7 +8,7 @@
 
 using namespace std;
 
-//void fftw_hao_test();
+void fftw_hao_test();
 void cufft_hao_test();
 
 int main(int argc, char** argv)
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
     if(rank==0)
     {   
         cout<<"\n\n\n=======Testing======="<<endl;
-        //fftw_hao_test();
+        fftw_hao_test();
         cufft_hao_test();
     }
 
