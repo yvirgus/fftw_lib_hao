@@ -1,7 +1,7 @@
 #include<iostream>
 #include<stdlib.h>
 #include <algorithm> 
-#include "fftw_cuda.h"
+#include "cufft_hao.h"
 
 using std::cout;
 using std::endl;

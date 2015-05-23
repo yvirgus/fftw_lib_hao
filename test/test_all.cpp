@@ -4,12 +4,12 @@
 #endif
 
 //#include "fftw_hao.h"
-#include "fftw_cuda.h"
+#include "cufft_hao.h"
 
 using namespace std;
 
 //void fftw_hao_test();
-void fftw_cuda_test();
+void cufft_hao_test();
 
 int main(int argc, char** argv)
 {
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
     {   
         cout<<"\n\n\n=======Testing======="<<endl;
         //fftw_hao_test();
-        fftw_cuda_test();
+        cufft_hao_test();
     }
 
 

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <iomanip>
-#include "fftw_cuda.h"
+#include "cufft_hao.h"
 using namespace std;
 
 void FFTServer_cu_void_construction_test()
@@ -61,7 +61,7 @@ void FFTServer_cu_equal_test()
     else cout<<"Warning!!!! FFTServer_cu failed the equal test!\n";
 }
 
-void four_1D_test()
+void four_1D_test_cu()
 {
     int dimen=1;
     int n[1]={3};
@@ -86,7 +86,7 @@ void four_1D_test()
     else cout<<"Warning!!!! FFTServer_cu failed the 1D fourier test!\n";
 }
 
-void four_2D_test()
+void four_2D_test_cu()
 {
     int dimen=2;
     int n[2]={2,3};
@@ -115,12 +115,12 @@ void four_2D_test()
     //for(int i=0; i<6; i++) cout<<b[i]<<"\n";
 }
 
-void fftw_cuda_test()
+void cufft_hao_test()
 {
     FFTServer_cu_void_construction_test();
     FFTServer_cu_param_construction_test();
     FFTServer_cu_equal_construction_test(); 
     FFTServer_cu_equal_test();
-    four_1D_test();
-    four_2D_test();
+    four_1D_test_cu();
+    four_2D_test_cu();
 }
