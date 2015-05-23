@@ -2,7 +2,7 @@
 #include<stdlib.h>
 #include <algorithm> 
 #include "fftw_cuda.h"
-//#include "cuda_runtime_api.h"
+
 using std::cout;
 using std::endl;
 using std::complex;
