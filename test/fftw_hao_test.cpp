@@ -10,9 +10,9 @@ void FFTServer_void_construction_test()
     int L=1;
     FFTServer fft;
     size_t flag=0;
-    if(fft.dimen!=dimen) flag++;
-    for(int i=0; i<dimen; i++) {if(fft.n[i]!=n[i]) flag++;}
-    if(fft.L!=L) flag++;
+    if(fft.get_dimen()!=dimen) flag++;
+    for(int i=0; i<dimen; i++) {if(fft.get_n()[i]!=n[i]) flag++;}
+    if(fft.get_L()!=L) flag++;
     if(flag==0) cout<<"FFTServer passed the void construction test!\n";
     else cout<<"Warning!!!! FFTServer failed the void construction test!\n";
 }
@@ -24,9 +24,9 @@ void FFTServer_param_construction_test()
     int L=36;
     FFTServer fft(dimen,n,'R');
     size_t flag=0;
-    if(fft.dimen!=dimen) flag++;
-    for(int i=0; i<dimen; i++) {if(fft.n[i]!=n[i]) flag++;}
-    if(fft.L!=L) flag++;
+    if(fft.get_dimen()!=dimen) flag++;
+    for(int i=0; i<dimen; i++) {if(fft.get_n()[i]!=n[i]) flag++;}
+    if(fft.get_L()!=L) flag++;
     if(flag==0) cout<<"FFTServer passed the param construction test!\n";
     else cout<<"Warning!!!! FFTServer failed the param construction test!\n";
 }
@@ -39,9 +39,9 @@ void FFTServer_equal_construction_test()
     FFTServer fft_tmp(dimen,n,'R');
     FFTServer fft(fft_tmp);
     size_t flag=0;
-    if(fft.dimen!=dimen) flag++;
-    for(int i=0; i<dimen; i++) {if(fft.n[i]!=n[i]) flag++;}
-    if(fft.L!=L) flag++;
+    if(fft.get_dimen()!=dimen) flag++;
+    for(int i=0; i<dimen; i++) {if(fft.get_n()[i]!=n[i]) flag++;}
+    if(fft.get_L()!=L) flag++;
     if(flag==0) cout<<"FFTServer passed the equal construction test!\n";
     else cout<<"Warning!!!! FFTServer failed the equal construction test!\n";
 }
@@ -54,9 +54,9 @@ void FFTServer_equal_test()
     FFTServer fft_tmp(dimen,n, 'R');
     FFTServer fft; fft=fft_tmp;
     size_t flag=0;
-    if(fft.dimen!=dimen) flag++;
-    for(int i=0; i<dimen; i++) {if(fft.n[i]!=n[i]) flag++;}
-    if(fft.L!=L) flag++;
+    if(fft.get_dimen()!=dimen) flag++;
+    for(int i=0; i<dimen; i++) {if(fft.get_n()[i]!=n[i]) flag++;}
+    if(fft.get_L()!=L) flag++;
     if(flag==0) cout<<"FFTServer passed the equal test!\n";
     else cout<<"Warning!!!! FFTServer failed the equal test!\n";
 }
