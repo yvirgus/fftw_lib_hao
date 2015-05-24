@@ -2,12 +2,10 @@
 #define FFTW_HAO_H
 
 #include "fftw_define.h"
+#include "fft_base.h"
 
-class FFTServer
+class FFTServer: public FFTServer_base
 {
-    int  dimen;
-    int* n;
-    int  L;
     std::complex<double>* inforw;
     std::complex<double>* outforw;
     std::complex<double>* inback;
