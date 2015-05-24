@@ -1,13 +1,11 @@
-#ifndef CU_FFTW
-#define CU_FFTW
+#ifndef _FFT_HAO_CUFFTW
+#define _FFT_HAO_CUFFTW
 
 #include "fftw_define.h"
+#include "fft_base.h"
 
-class FFTServer_cu
+class FFTServer_cu: public FFTServer_base
 {
-    int  dimen;
-    int* n;
-    int  L;
     cufftHandle plan;
     cufftDoubleComplex *dataforw = nullptr;
     cufftDoubleComplex *databack = nullptr;
