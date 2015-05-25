@@ -1,4 +1,4 @@
-set(fftw_test_srcs fftw_hao_test.cpp cufft_hao_test.cpp test_all.cpp time_hao.cpp)
+set(fftw_test_srcs fftw_hao_test.cpp cufft_hao_test.cpp test_all.cpp time_hao.cpp fft_size_test.cpp)
 
 add_executable(fftwtest ${fftw_test_srcs})
 

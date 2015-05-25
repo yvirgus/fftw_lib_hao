@@ -4,13 +4,13 @@
 #endif
 
 //#include "fftw_hao.h"
-#include "cufft_hao.h"
+//#include "cufft_hao.h"
 
 using namespace std;
 
 void fftw_hao_test();
 void cufft_hao_test();
-
+void fft_size_test();
 int main(int argc, char** argv)
 {
     int rank=0;
@@ -25,6 +25,7 @@ int main(int argc, char** argv)
         cout<<"\n\n\n=======Testing======="<<endl;
         fftw_hao_test();
         cufft_hao_test();
+        fft_size_test();
     }
 
 

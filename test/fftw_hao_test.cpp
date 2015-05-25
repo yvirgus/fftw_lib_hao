@@ -93,7 +93,6 @@ void four_2D_test()
                                     {0., 2. },{0.23205080756887897,-0.1339745962155594},{-3.2320508075688763,-1.8660254037844366}};
     size_t flag=0;
    
-   
     b=fft.fourier_forw(a);
     for(int i=0; i<6; i++) {if(abs(b[i]-bforw_exact[i])>1e-12) flag++;}
     b=fft.fourier_back(a);
