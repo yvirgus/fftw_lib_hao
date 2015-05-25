@@ -14,13 +14,13 @@ double magma_wtime( void )
 
 using namespace std;
 
-void fill_random( complex<double>* A, int M)
+void fill_random( complex<double>* A, int L)
 {
     double R, I;
 
     srand(5323);
 
-    for (int i=0; i < M; i++){
+    for (int i=0; i < L; i++){
 
             R = (double)rand() / RAND_MAX;
             I = (double)rand() / RAND_MAX;
@@ -29,25 +29,26 @@ void fill_random( complex<double>* A, int M)
     }
 }
 
-void cufft_fftw_size_test()
+void cufft_fftw_size_1D_test()
 {
-    //int dimen = 2, Nx = 1000, Ny = 1000, M = Nx*Ny;
-    int dimen = 1, M = 1000000;
-    int n[dimen] = {M};
+    //int dimen = 2, Nx = 1000, Ny = 1000, L = Nx*Ny;
+    int dimen = 1, L = 1000000;
+    int n[dimen] = {L};
     //int n[dimen] = {Nx,Ny};
     double cpu_time, gpu_time;
 
-    cout << "M: " << M << endl;
-    complex<double> *A = new complex<double>[M];
+    cout << "M: " << L << endl;
+    complex<double> *A = new complex<double>[L];
     complex<double> *B_f;
 
     Timer_hao timer; timer.init();
-    fill_random(A, M);
+    fill_random(A, L);
     timer.end();    
     cout << "time: " << timer.seconds << endl;
 
     //cout << "A: " << A[0] << endl;
 
+    /*
     cout << "fftw starts!" << endl;
     cpu_time = magma_wtime();
     FFTServer fft(dimen, n, 'R');
@@ -55,6 +56,7 @@ void cufft_fftw_size_test()
     cpu_time = magma_wtime() - cpu_time;
     cout << "B_f: " << B_f[2] << endl;
     cout << "cpu_time: " << cpu_time << endl;
+    */
     //    for (int i=0; i<M; i++){
     //    cout << "B_f: " << B_f[i] << endl;
     //}
@@ -78,5 +80,5 @@ void cufft_fftw_size_test()
 
 void fft_size_test()
 {
-    cufft_fftw_size_test();
+    cufft_fftw_size_1D_test();
 }
