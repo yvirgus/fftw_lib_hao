@@ -33,7 +33,7 @@ void cufft_fftw_size_1D_test()
 {
     //int dimen = 2, Nx = 1000, Ny = 1000, L = Nx*Ny;
     int dimen = 1, L = 1000000;
-    int n[dimen] = {L};
+    int n[1] = {L};
     //int n[dimen] = {Nx,Ny};
     double cpu_time, gpu_time;
 
@@ -47,8 +47,7 @@ void cufft_fftw_size_1D_test()
     cout << "time: " << timer.seconds << endl;
 
     //cout << "A: " << A[0] << endl;
-
-    /*
+    
     cout << "fftw starts!" << endl;
     cpu_time = magma_wtime();
     FFTServer fft(dimen, n, 'R');
@@ -56,7 +55,7 @@ void cufft_fftw_size_1D_test()
     cpu_time = magma_wtime() - cpu_time;
     cout << "B_f: " << B_f[2] << endl;
     cout << "cpu_time: " << cpu_time << endl;
-    */
+   
     //    for (int i=0; i<M; i++){
     //    cout << "B_f: " << B_f[i] << endl;
     //}
