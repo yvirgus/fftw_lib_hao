@@ -442,7 +442,7 @@ void cufft_fftw_size_2D_test_batch(int Nx, int Ny)
 
     //cout << "flag: " << flag << endl;
 
-    printf("%5d       %5d       %5d       %7.6f                  %7.6f             %7.6f           %7.6f          %7.6f          %s\n", 
+    printf("%5d    %5d    %5d          %7.6f                  %7.6f             %7.6f           %7.6f          %7.6f          %s\n", 
            Nx, Ny,  batch,  cpu_time_plan, gpu_time_batch_plan, cpu_time*1000, gpu_time_batch*1000, cpu_time/gpu_time_batch, (flag == 0 ? "ok" : "failed"));  
 
 }
@@ -455,9 +455,9 @@ void cufft_fftw_size_2D_test_batch()
     //                   {72,56},{75,75},{80,80},{84,84},{96,96},{100,100},{105,105},{112,112},{120,120},{144,144},{180,180},{240,240},
     //                     {360,360},{1000,1000},{1050,1050},{1458,1458},{1960,1960},{2916,2916},{4116,4116}}; //,{5832,5832},{8400,8400},{10368,10368} };
 
-    cout << "\n2-dimensional, fftw (CPU) vs cufft (GPU), testing :\n";
-    cout << "     Nx     Ny   batch    CPU plan creation (s)     GPU plan creation (s)     CPU_exec (ms)    GPU_exec (ms)   CPU_exec/GPU_exec    result\n";
-    cout << "==========================================================================================================================================\n";
+    cout << "\n2-dimensional, fftw (CPU) vs cufft-batch (GPU), testing :\n";
+    cout << "    Nx     Ny     batch         CPU plan creation (s)     GPU plan creation (s)     CPU_exec (ms)    GPU_exec (ms)   CPU_exec/GPU_exec    result\n";
+    cout << "============================================================================================================================================\n";
     
     vector<int> sizes;
 
@@ -479,10 +479,85 @@ void cufft_fftw_size_2D_test_batch()
 */
 }
 
+void cufft_fftw_size_3D_test_batch(int Nx, int Ny, int Nz)
+{
+    int dimen = 3, batch = Nx*Ny*Nz, L = Nx*Ny*Nz;
+    int n[3] = {Nx, Ny, Nz};
+    double gpu_time_batch_plan, gpu_time_batch, cpu_time_plan, cpu_time, copy_time = 0, copy_time_temp;
+
+    complex<double> *A = new complex<double>[L*batch];
+    complex<double> *Bf_gpu = new complex<double>[L*batch];
+    complex<double> *Bb_gpu = new complex<double>[L*batch];
+    complex<double> *Bf_gpu_batch = new complex<double>[L*batch];
+    complex<double> *Bb_gpu_batch = new complex<double>[L*batch];
+    complex<double> *Bf_t, *Bb_t;
+
+    size_t flag = 0;
+
+    fill_random(A, L*batch);
+
+    cpu_time_plan = magma_wtime();
+    FFTServer fft(dimen, n, 'R');
+    cpu_time_plan = magma_wtime() - cpu_time_plan;
+
+    cpu_time = magma_wtime();
+    for (int i = 0; i< batch; i++) {
+        Bf_t = fft.fourier_forw(A + i*L);
+        Bb_t = fft.fourier_back(A + i*L);
+
+        copy_time_temp = magma_wtime();
+        std::copy(Bf_t, Bf_t + L, Bf_gpu + i*L);
+        std::copy(Bb_t, Bb_t + L, Bb_gpu + i*L);
+        copy_time = copy_time + (magma_wtime() - copy_time_temp);
+    }
+    cpu_time = magma_wtime() - cpu_time - copy_time;
+
+    //cout << "copy_time: " << copy_time*1000 << " (ms)" << endl;
+
+    gpu_time_batch_plan = magma_wtime();
+    FFTServer_cu cufft_batch(dimen, n, 'R', batch);
+    gpu_time_batch_plan = magma_wtime() - gpu_time_batch_plan;
+
+    gpu_time_batch = magma_wtime();
+    Bf_gpu_batch = cufft_batch.fourier_forw(A);
+    Bb_gpu_batch = cufft_batch.fourier_back(A);
+    gpu_time_batch = magma_wtime() - gpu_time_batch;
+
+
+    for (int i=0; i<L*batch ; i++){
+        if (abs(Bf_gpu_batch[i] - Bf_gpu[i]) > 1e-10)    flag++;
+        if (abs(Bb_gpu_batch[i] - Bb_gpu[i]) > 1e-10)    flag++;
+    }
+
+    //cout << "flag: " << flag << endl;
+
+    printf("%3d    %3d    %3d   %5d          %7.6f                  %7.6f             %7.6f           %7.6f          %7.6f          %s\n", 
+           Nx, Ny, Nz,  batch,  cpu_time_plan, gpu_time_batch_plan, cpu_time*1000, gpu_time_batch*1000, cpu_time/gpu_time_batch, (flag == 0 ? "ok" : "failed"));  
+
+}
+
+void cufft_fftw_size_3D_test_batch()
+{
+    cout << "\n3-dimensional, fftw (CPU) vs cufft-batch (GPU), testing :\n";
+    cout << "   Nx   Ny   Nz     batch         CPU plan creation (s)     GPU plan creation (s)     CPU_exec (ms)    GPU_exec (ms)   CPU_exec/GPU_exec    result\n";
+    cout << "===================================================================================================================================================\n";
+    
+    vector<int> sizes;
+
+    for (int i = 2; i < 40; i += 2){
+        sizes.push_back(i);
+    }
+
+    for (vector<int>:: iterator it = sizes.begin() ; it!= sizes.end(); ++it){
+        cufft_fftw_size_3D_test_batch(*it, *it, *it);
+    }
+}
+
 void fft_size_test()
 {
     //cufft_fftw_size_1D_test_batch();
-    cufft_fftw_size_2D_test_batch();
+    //cufft_fftw_size_2D_test_batch();
+    cufft_fftw_size_3D_test_batch();
     //cufft_fftw_size_1D_test();
     //cufft_fftw_size_2D_test();
     //cufft_fftw_size_3D_test();
