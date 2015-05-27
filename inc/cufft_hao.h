@@ -11,10 +11,11 @@ class FFTServer_cu: public FFTServer_base
     cufftDoubleComplex *databack = nullptr;
     std::complex<double> *outforw_host = nullptr;
     std::complex<double> *outback_host = nullptr;
+    int BATCH;
 
  public:
     FFTServer_cu();
-    FFTServer_cu(int Dc, const int* Nc, char format); //'C' Column-major: fortran style; 'R' Row-major: c style;
+    FFTServer_cu(int Dc, const int* Nc, char format, int BATCH = 1); //'C' Column-major: fortran style; 'R' Row-major: c style;
     FFTServer_cu(const FFTServer_cu& x);
     ~FFTServer_cu();
    
