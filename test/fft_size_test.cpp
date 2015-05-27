@@ -310,8 +310,8 @@ void cufft_fftw_size_1D_test_batch(int L)
     complex<double> *A = new complex<double>[L*batch];
     complex<double> *Bf_gpu = new complex<double>[L*batch];
     complex<double> *Bb_gpu = new complex<double>[L*batch];
-    complex<double> *Bf_gpu_batch = new complex<double>[L*batch];
-    complex<double> *Bb_gpu_batch = new complex<double>[L*batch];
+    complex<double> *Bf_gpu_batch; // should not use "new" because it will be assigned a pointer from the class which will be deleted  
+    complex<double> *Bb_gpu_batch;
     complex<double> *Bf_t, *Bb_t;
 
     size_t flag = 0;
@@ -352,6 +352,11 @@ void cufft_fftw_size_1D_test_batch(int L)
         if (abs(Bf_gpu_batch[i] - Bf_gpu[i]) > 1e-10)    flag++;
         if (abs(Bb_gpu_batch[i] - Bb_gpu[i]) > 1e-10)    flag++;
     }
+
+
+    if(A)             delete[] A;
+    if(Bf_gpu)        delete[] Bf_gpu;
+    if(Bb_gpu)        delete[] Bb_gpu;
 
     //cout << "flag: " << flag << endl;
 
@@ -399,8 +404,8 @@ void cufft_fftw_size_2D_test_batch(int Nx, int Ny)
     complex<double> *A = new complex<double>[L*batch];
     complex<double> *Bf_gpu = new complex<double>[L*batch];
     complex<double> *Bb_gpu = new complex<double>[L*batch];
-    complex<double> *Bf_gpu_batch = new complex<double>[L*batch];
-    complex<double> *Bb_gpu_batch = new complex<double>[L*batch];
+    complex<double> *Bf_gpu_batch;  // should not use "new" because it will be assigned a pointer from the class which will be deleted  
+    complex<double> *Bb_gpu_batch;
     complex<double> *Bf_t, *Bb_t;
 
     size_t flag = 0;
@@ -441,6 +446,10 @@ void cufft_fftw_size_2D_test_batch(int Nx, int Ny)
     }
 
     //cout << "flag: " << flag << endl;
+
+    if(A)             delete[] A;
+    if(Bf_gpu)        delete[] Bf_gpu;
+    if(Bb_gpu)        delete[] Bb_gpu;
 
     printf("%5d    %5d    %5d          %7.6f                  %7.6f             %7.6f           %7.6f          %7.6f          %s\n", 
            Nx, Ny,  batch,  cpu_time_plan, gpu_time_batch_plan, cpu_time*1000, gpu_time_batch*1000, cpu_time/gpu_time_batch, (flag == 0 ? "ok" : "failed"));  
@@ -485,11 +494,18 @@ void cufft_fftw_size_3D_test_batch(int Nx, int Ny, int Nz)
     int n[3] = {Nx, Ny, Nz};
     double gpu_time_batch_plan, gpu_time_batch, cpu_time_plan, cpu_time, copy_time = 0, copy_time_temp;
 
+    // A cleaner way is probably using vector or valarray. Since it's a class, there will be a destructor.
+    // Therefore we don't need to worry about deleting it.
+    //vector<complex<double>> A(L*batch);
+    //A.begin() -> A
+    //    A.end() -> A + (L*batch)
+    //Bf_t = fft.fourier_forw(&A[i*L]); // since operator [] is reference (need to double check this).
+
     complex<double> *A = new complex<double>[L*batch];
     complex<double> *Bf_gpu = new complex<double>[L*batch];
     complex<double> *Bb_gpu = new complex<double>[L*batch];
-    complex<double> *Bf_gpu_batch = new complex<double>[L*batch];
-    complex<double> *Bb_gpu_batch = new complex<double>[L*batch];
+    complex<double> *Bf_gpu_batch; // should not use "new" because it will be assigned a pointer from the class which will be deleted 
+    complex<double> *Bb_gpu_batch;  
     complex<double> *Bf_t, *Bb_t;
 
     size_t flag = 0;
@@ -530,6 +546,10 @@ void cufft_fftw_size_3D_test_batch(int Nx, int Ny, int Nz)
     }
 
     //cout << "flag: " << flag << endl;
+
+    if(A)             delete[] A;
+    if(Bf_gpu)        delete[] Bf_gpu;
+    if(Bb_gpu)        delete[] Bb_gpu;
 
     printf("%3d    %3d    %3d   %5d          %7.6f                  %7.6f             %7.6f           %7.6f          %7.6f          %s\n", 
            Nx, Ny, Nz,  batch,  cpu_time_plan, gpu_time_batch_plan, cpu_time*1000, gpu_time_batch*1000, cpu_time/gpu_time_batch, (flag == 0 ? "ok" : "failed"));  
